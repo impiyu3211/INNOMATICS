@@ -1,0 +1,64 @@
+import pandas as pd
+
+# Assuming the dataset is loaded in a DataFrame 'df'
+# Create property_age_category feature
+conditions = [
+    (df['property_age'] <= 1),
+    (df['property_age'] > 1) & (df['property_age'] <= 5),
+    (df['property_age'] > 5) & (df['property_age'] <= 10),
+    (df['property_age'] > 10) & (df['property_age'] <= 20),
+    (df['property_age'] > 20)
+]
+
+categories = ['New', 'Less than 5 years', '5 to 10 years', '10 to 20 years', 'More than 20 years']
+
+df['property_age_category'] = pd.cut(df['property_age'], bins=[-float('inf'), 1, 5, 10, 20, float('inf')], labels=categories)
+
+# Find the most frequent category
+most_frequent_category = df['property_age_category'].mode()[0]
+print(f"The most frequent category is: {most_frequent_category}")
+
+
+
+import pandas as pd
+
+# Assuming the 'request_date' column is a datetime object
+df['hour'] = df['request_date'].dt.hour  # Extracting the hour
+
+# Creating the 'time_category' column
+conditions = [
+    (df['hour'] >= 0) & (df['hour'] < 6),  # Midnight: 00:00-05:59
+    (df['hour'] >= 6) & (df['hour'] < 12), # Morning: 06:00-11:59
+    (df['hour'] >= 12) & (df['hour'] < 18), # Afternoon: 12:00-17:59
+    (df['hour'] >= 18) & (df['hour'] <= 23) # Evening: 18:00-23:59
+]
+
+categories = ['Midnight', 'Morning', 'Afternoon', 'Evening']
+
+df['time_category'] = pd.cut(df['hour'], bins=[-1, 5, 11, 17, 23], labels=categories)
+
+# Find the most frequent time category
+most_frequent_time_category = df['time_category'].mode()[0]
+print(f"The most frequent time category is: {most_frequent_time_category}")
+
+
+
+# Group by activation_date and count the number of properties listed each day
+activation_counts = df['activation_date'].value_counts()
+
+# Get the date with the most properties activated
+most_activated_date = activation_counts.idxmax()
+print(f"The date with the most properties activated is: {most_activated_date}")
+
+
+
+# Count the number of properties with lease_type as 'Anyone'
+num_anyone = df[df['lease_type'] == 'Anyone'].shape[0]
+
+# Total number of properties
+total_properties = df.shape[0]
+
+# Calculate the percentage
+percentage_anyone = (num_anyone / total_properties) * 100
+print(f"The percentage of properties available for lease under the 'Anyone' category is: {percentage_anyone:.2f}%")
+
